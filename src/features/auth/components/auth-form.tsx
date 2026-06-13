@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { authService } from "@/services/auth.service";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -49,7 +50,17 @@ export function LoginForm() {
       <CardContent>
         <form
           className="space-y-4"
-          onSubmit={form.handleSubmit(() => router.push("/dashboard/projects"))}
+          onSubmit={form.handleSubmit(async (values) => {
+            try {
+              await authService.login(values);
+              router.push("/dashboard/projects");
+            } catch (error) {
+              form.setError("root", {
+                message:
+                  error instanceof Error ? error.message : "Unable to login.",
+              });
+            }
+          })}
         >
           <div className="space-y-1.5">
             <Label htmlFor="email">Email</Label>
@@ -76,8 +87,13 @@ export function LoginForm() {
             ) : null}
           </div>
           <Button className="w-full" type="submit">
-            Sign in
+            {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
           </Button>
+          {form.formState.errors.root?.message ? (
+            <p className="text-xs text-rose-600">
+              {form.formState.errors.root.message}
+            </p>
+          ) : null}
           <p className="text-center text-sm text-slate-500 dark:text-slate-400">
             No account?{" "}
             <Link href="/register" className="text-sky-600">
@@ -105,7 +121,23 @@ export function RegisterForm() {
       <CardContent>
         <form
           className="space-y-4"
-          onSubmit={form.handleSubmit(() => router.push("/dashboard/projects"))}
+          onSubmit={form.handleSubmit(async (values) => {
+            try {
+              await authService.register({
+                name: values.name,
+                email: values.email,
+                password: values.password,
+              });
+              router.push("/dashboard/projects");
+            } catch (error) {
+              form.setError("root", {
+                message:
+                  error instanceof Error
+                    ? error.message
+                    : "Unable to create account.",
+              });
+            }
+          })}
         >
           <div className="space-y-1.5">
             <Label htmlFor="name">Name</Label>
@@ -148,8 +180,15 @@ export function RegisterForm() {
             ) : null}
           </div>
           <Button className="w-full" type="submit">
-            Create account
+            {form.formState.isSubmitting
+              ? "Creating account..."
+              : "Create account"}
           </Button>
+          {form.formState.errors.root?.message ? (
+            <p className="text-xs text-rose-600">
+              {form.formState.errors.root.message}
+            </p>
+          ) : null}
           <p className="text-center text-sm text-slate-500 dark:text-slate-400">
             Already registered?{" "}
             <Link href="/login" className="text-sky-600">
