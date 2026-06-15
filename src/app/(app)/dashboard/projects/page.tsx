@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -56,6 +57,9 @@ export default function ProjectsPage() {
           After login, create or select a project before uploading and
           generating plans.
         </p>
+        <Button asChild className="mt-3" variant="outline" size="sm">
+          <Link href="/dashboard/projects/list">View All Projects</Link>
+        </Button>
       </div>
 
       <MetricsCards metrics={metrics.data!} />

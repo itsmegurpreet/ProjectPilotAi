@@ -22,10 +22,15 @@ export const documentService = {
       file.mimetype,
     );
 
+    const documentHeader = `Document: ${file.originalname}`;
+    const accumulatedText = project.extractedText?.trim()
+      ? `${project.extractedText.trim()}\n\n${documentHeader}\n${extractedText.trim()}`
+      : `${documentHeader}\n${extractedText.trim()}`;
+
     return projectRepository.update(project.id, {
       originalFileName: file.originalname,
       filePath: file.path,
-      extractedText,
+      extractedText: accumulatedText,
       status: "UPLOADED",
     });
   },

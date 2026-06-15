@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Menu } from "lucide-react";
+import { LogoutButton } from "@/components/auth/logout-button";
 import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </Button>
               ))}
             </nav>
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              <LogoutButton />
+              <ThemeToggle />
+            </div>
           </div>
         </header>
         <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">

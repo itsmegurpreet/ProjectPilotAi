@@ -45,6 +45,11 @@ apiClient.interceptors.response.use(
     const refreshToken = getRefreshToken();
     const isRefreshCall = originalRequest?.url?.includes("/auth/refresh");
 
+    if (isUnauthorized && (!refreshToken || isRefreshCall)) {
+      clearAuthTokens();
+      redirectToLogin();
+    }
+
     if (
       isUnauthorized &&
       !originalRequest?._retry &&

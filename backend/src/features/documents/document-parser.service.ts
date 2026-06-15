@@ -1,19 +1,20 @@
 import fs from "fs/promises";
 import mammoth from "mammoth";
-import pdfParse from "pdf-parse";
+import { PDFParse } from "pdf-parse";
 import { AppError } from "@/common/errors/app-error";
-
-type PdfParseFn = (buffer: Buffer) => Promise<{ text?: string }>;
-
-const parsePdf = ((pdfParse as unknown as { default?: PdfParseFn }).default ||
-  (pdfParse as unknown as PdfParseFn)) as PdfParseFn;
 
 export const documentParserService = {
   async extractText(filePath: string, mimetype: string) {
     if (mimetype === "application/pdf") {
       const buffer = await fs.readFile(filePath);
-      const parsed = await parsePdf(buffer);
-      return parsed.text?.trim() || "";
+      const parser = new PDFParse({ data: buffer });
+
+      try {
+        const parsed = await parser.getText();
+        return parsed.text?.trim() || "";
+      } finally {
+        await parser.destroy();
+      }
     }
 
     if (

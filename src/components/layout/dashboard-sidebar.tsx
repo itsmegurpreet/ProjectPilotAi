@@ -11,11 +11,13 @@ import {
   Home,
   KanbanSquare,
   Layers,
+  List,
   UserCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const nav = [
+  { href: "/dashboard/projects/list", label: "All Projects", icon: List },
   { slug: "", label: "Overview", icon: Home },
   { slug: "upload", label: "Upload", icon: FileUp },
   { slug: "analysis", label: "Analysis", icon: ClipboardList },
@@ -60,7 +62,9 @@ export function DashboardSidebar() {
           const href =
             item.href ||
             `${projectBasePath}${item.slug ? `/${item.slug}` : ""}`;
-          const active = Boolean(projectBasePath) && pathname === href;
+          const active = item.href
+            ? pathname === item.href
+            : Boolean(projectBasePath) && pathname === href;
           const Icon = item.icon;
           return (
             <Link

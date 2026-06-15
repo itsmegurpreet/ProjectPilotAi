@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { getAccessToken } from "@/lib/auth";
+import {
+  clearAuthTokens,
+  getAccessToken,
+  isAccessTokenExpired,
+} from "@/lib/auth";
 
 export function DashboardAuthGuard({
   children,
@@ -15,8 +19,10 @@ export function DashboardAuthGuard({
 
   useEffect(() => {
     const token = getAccessToken();
+    const isExpired = isAccessTokenExpired();
 
-    if (!token) {
+    if (!token || isExpired) {
+      clearAuthTokens();
       const next = pathname ? `?next=${encodeURIComponent(pathname)}` : "";
       router.replace(`/login${next}`);
       return;

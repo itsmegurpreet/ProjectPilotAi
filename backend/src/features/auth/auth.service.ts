@@ -58,7 +58,14 @@ export const authService = {
   },
 
   async refresh(refreshToken: string) {
-    const payload = verifyRefreshToken(refreshToken);
+    let payload: { userId: string; email: string };
+
+    try {
+      payload = verifyRefreshToken(refreshToken);
+    } catch {
+      throw new AppError("Invalid refresh token", 401);
+    }
+
     const user = await authRepository.findByEmail(payload.email);
     if (!user || user.id !== payload.userId) {
       throw new AppError("Invalid refresh token", 401);
